@@ -74,28 +74,62 @@ app.get("/", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const { nome, login, senha } = req.body;
+  const { login, senha } = req.body;
 
-  if (!nome || !login || !senha) {
-    return res
-      .status(400)
-      .json({ message: "Nome, login e senha são obrigatórios" });
+  //verifica se um dos campos vieram vazios
+  if (!login || !senha) {
+    res.status(404).json({
+      status: 404,
+      message: "Requisição inválida",
+    });
   }
 
-  const pessoaExiste = pessoas.findIndex((p) => p.login === login);
-  if (pessoaExiste) {
-    res.status(404).json("pessoa já existe");
+  const usuario = pessoas.find((p) => p.login === login);
+  if (!usuario) {
+    res.status(404).json({
+      status: 404,
+      message: "Usuário não encontrado",
+    });
   }
-
-  const novaPessoa = {
-    id: pessoas.length + 1,
-    nome: req?.body.nome,
-    login: req?.body.login,
-    senha: req?.body.senha,
-  };
-  pessoas.push(novaPessoa);
-  res.status(201).json("pssoa criada com sucesso");
+  if (usuario.senha !== senha) {
+    res.status(404).json({
+      status: 404,
+      message: "Senha inválida",
+    });
+  }
+  //res.status(200).json({ status: 200, message: "Login com sucesso" })
+  res.redirect("/itens.html");
 });
+
+
+app.get("/itens.html", (req, res) => {
+  res.sendFile(path.join(publicDir, "itens.html"));
+});
+
+//post
+app.post("/pessoas", (req, res) => {
+ 
+ const pessoaExiste = pessoas.findIndex((p) => p.login === req.body.login);
+  if (pessoaExiste !== -1) {
+    return res.status(400).json({ message: "Login já existe" });
+  }
+  const novaPessoa = {
+    id:pessoas.length +1,
+    nome: req?.body?.nome,
+    idade: req?.body?.idade,
+    irmaos: req?.body?.irmaos,
+    cidade: req?.body?.cidade,
+    hobby: req?.body?.hobby,
+  }
+    pessoas.push(novaPessoa);
+    console.log(pessoas);
+    res.status(201).json({ message: "Pessoa cadastrada com sucesso", novaPessoa });
+    
+  
+  });
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
