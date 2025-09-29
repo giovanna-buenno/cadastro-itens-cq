@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <style>
+      h1 {
+          color: rgb(102, 0, 0) ;
+            font-size: 50px;
+          padding: 10px;
+    
+          text-align: center;
+      }
+
+      h2 {
+          color: rgb(102, 0, 0) ;
+          font-size: 70px;
+          padding: 10px;
+             text-align: center;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <h1>Visão Geral</h1>
+
+    <h2>✨Visão Geral dos usuários✨</h2>
+ <div id = "status"> Carregando... </div>
+ <div id = "lista" >
+    <! -- A lista de usuários será inserida aqui  -->
+ </div>
+
+<button onclick="mostrarformulario()"➕ adicionar pessoas ></button>
+ 
+<form>
+  
+  <label> Nome: </label>
+  <imput type="text" id="nome" name = "nome" />
+ 
+  <label> Login: </label>
+  <imput type="text" id="login" name = "login" />
+  
+  <label> Senha: </label>
+  <imput type="password" id="senha" name = "senha" />
+ 
+</form>
+ 
+ <script>
+    async function carregarPessoas() {
+        const response = await fetch("/pessoas");
+        
+        console.log(response);
+
+        const elemento = document.getElementById("status");
+        if(!response.ok) {
+           
+            elemento.textContetnt = "Não foi possível carregar as pessoas";
+        }
+        elemento.textContent = "Pessoas carregadas com sucesso";
+
+        const pessoas = await response.json();
+        console.log("\n Responses:", response,
+        "\n Pessoas:", pessoas);
+    }
+    const container = document.getElementById("lista");
+    const ul = document.createElement("ul");
+    for(let c=0; c < pessoas.length; c++) {
+        const pessoa = pessoas[c];
+        const texto =`NOME: ${pessoa.nome} -- ${pessoa.login} -- SENHA: ${pessoa.senha}`;
+
+        const li = document.createElement("li");
+        li.textContent = texto;
+        
+    }
+
+    
+
+
+    carregarPessoas();
+
+    </script>
+
+
+    
+  </body>
+</html>
