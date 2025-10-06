@@ -1,3 +1,4 @@
+
 const { log } = require("console");
 const express = require("express");
 const path = require("path");
@@ -16,35 +17,35 @@ let pessoas = [
     login: "admin",
     senha: "123",
 
-    
+
   },
   {
     id: 2,
     nome: "Gaby",
     login: "admin1",
     senha: "123"
-    
+
   },
   {
     id: 3,
     nome: "Anna Laura",
     login: "admin3",
     senha: "123"
-   
+
   },
   {
     id: 4,
     nome: "Yasmin",
     login: "admin4",
     senha: "123"
-   
+
   },
   {
     id: 5,
     nome: "Lynne",
     login: "admin5",
     senha: "123"
-   
+
   },
 ];
 
@@ -142,11 +143,56 @@ app.put("/pessoas/:id", (req, res) => {
     nome: req?.body?.nome,
     login: req?.body?.login,
     senha: req?.body?.senha,
-   
+
   };
   pessoas[pessoaIndex] = pessoaAtualizada;
   res.json({ message: "Pessoa atualizada com sucesso", pessoaAtualizada });
 });
+
+app.get('/pessoas/:id', (req, res) => {
+  const idDaPessoa = parseInt(req.params.id);
+  const pessoa = pessoas.find(p => p.id === idDaPessoa);
+
+  if (pessoa) {
+    res.json(pessoa);
+  } else {
+    res.status(404).send('Pessoa não encontrada');
+  }
+});
+app.put("/pessoas/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  console.log("ID:", id);
+
+  const pessoa = pessoas.find((p) => p.id === id);
+  console.log("PESSOA:", pessoa);
+
+  if (!pessoa) {
+    return res.status(404).json({ mensagem: "Pessoa não encontrada" });
+  }
+  const novaPessoa = req.body;
+  console.log("NOVA PESSOA:", novaPessoa);
+  console.log("PESSOA ANTIGA:", pessoa);
+
+  pessoa.nome = novaPessoa.nome;
+  pessoa.login = novaPessoa.login;
+  pessoa.senha = novaPessoa.senha;
+
+  pessoas[pessoa.id - 1] = pessoa;
+
+  console.log("PESSOAS:", pessoas);
+
+  res.json(pessoa);
+});
+app.get("/pessoas/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const pessoa = pessoas.find((p) => p.id === id);
+
+  if (!pessoa) {
+    return res.status(404).json({ mensagem: "Pessoas não encontrada" });
+  }
+  res.json(pessoa);
+});
+
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
